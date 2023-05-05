@@ -5,6 +5,8 @@ const users = require("./app/users");
 const review = require("./app/review")
 const cors = require("cors");
 const express = require("express")
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://kkackeev:hcwNuGJu1eyXkI0B@akjol.4gpytug.mongodb.net/?retryWrites=true&w=majority";
 
 const run = async () => {
 
@@ -12,7 +14,14 @@ const run = async () => {
     app.use(express.json());
     app.use(express.static("public"));
 
-    await mongoose.connect(config.db.url + "/" + config.db.name, {useNewUrlParser: true});
+    await mongoose.connect(uri, {
+        serverApi: {
+            version: ServerApiVersion.v1,
+            strict: true,
+            deprecationErrors: true, useNewUrlParser: true
+        }
+    });
+
 
     app.use("/users", users);
     app.use("/review", review);
