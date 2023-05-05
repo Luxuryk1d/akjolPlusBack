@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const {app, port} = require("./app");
 const config = require("./config");
 const users = require("./app/users");
+const review = require("./app/review")
 const cors = require("cors");
 const express = require("express")
 
@@ -14,6 +15,7 @@ const run = async () => {
     await mongoose.connect(config.db.url + "/" + config.db.name, {useNewUrlParser: true});
 
     app.use("/users", users);
+    app.use("/review", review);
 
     console.log("Connected to mongo DB");
 

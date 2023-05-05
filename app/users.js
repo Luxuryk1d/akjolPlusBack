@@ -58,7 +58,6 @@ router.post("/", async (req, res) => {
 });
 
 router.post("/sessions", async (req, res) => {
-    console.log("qwert")
     const user = await User.findOne({phone: req.body.phone});
     if (!user) {
         return res.status(400).send({error: "Такой номер не найден"});
