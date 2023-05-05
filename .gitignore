@@ -1,0 +1,4 @@
+node_modules
+.idea
+elasticsearch-7.10.2
+.env
