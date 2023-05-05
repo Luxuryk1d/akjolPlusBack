@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const {nanoid} = import('nanoid');
+const {nanoid} = require("nanoid");
 
 const SALT_WORK_FACTOR = 10;
 
@@ -14,13 +14,6 @@ const UserSchema = new Schema({
         type: String,
         required: [true, "Поле phone обязательно для заполнения"],
         unique: true,
-        validate: {
-            validator: async (value) => {
-                const user = await User.findOne({phone: value});
-                if (user) return false;
-            },
-            message: (props) => `Номер ${props.value} уже используется`
-        }
     },
     mail: {
         type: String,
@@ -38,12 +31,6 @@ const UserSchema = new Schema({
         type: String,
         required: [true, "Поле password обязательно для заполнения"],
         minlength: [8, "Минимальная длина пароля 8 символов"],
-        validate: {
-            validator: (value) => {
-                return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/g.test(value);
-            },
-            message: "Пароль слишком простой"
-        }
     },
     token: {
         type: String,
@@ -56,10 +43,6 @@ const UserSchema = new Schema({
     sex: {
         type: String,
         enum: ["male", "female"]
-    },
-    town: {
-        type: String,
-        required: true
     }
 });
 

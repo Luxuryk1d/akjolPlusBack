@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 const bcrypt = require("bcrypt");
 const SALT_WORK_FACTOR = 10;
 
-router.get("/users/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
@@ -17,10 +17,9 @@ router.get("/users/:id", async (req, res) => {
     }
 });
 
-router.post("/users", async (req, res) => {
+router.post("/", async (req, res) => {
     try {
         const checkUser = await User.findOne({phone: req.body.phone});
-        console.log(req.body)
         if (checkUser) {
             return res.status(400).send({error: "Такой номер уже зарегистрирован"});
         }
@@ -39,10 +38,6 @@ router.post("/users", async (req, res) => {
         if (req.body.sex === "") {
             return res.status(400).send({error: "Пожалуйста, выберите пол"});
         }
-        if (req.body.town === "") {
-            return res.status(400).send({error: "Пожалуйста, введите город"});
-        }
-
         const user = new User({
             fullName: req.body.fullName,
             phone: req.body.phone,
@@ -50,9 +45,10 @@ router.post("/users", async (req, res) => {
             password: req.body.password,
             role: req.body.role,
             sex: req.body.sex,
-            town: req.body.town,
+            token: ""
         });
         user.generateToken();
+        console.log(user)
         await user.save();
         res.send(user);
 
@@ -60,3 +56,35 @@ router.post("/users", async (req, res) => {
         return res.status(400).send(e);
     }
 });
+
+router.post("/sessions", async (req, res) => {
+    console.log("qwert")
+    const user = await User.findOne({phone: req.body.phone});
+    if (!user) {
+        return res.status(400).send({error: "Такой номер не найден"});
+    }
+    const isMatch = await user.checkPassword(req.body.password);
+    if (!isMatch) {
+        return res.status(400).send({error: "Не верный пароль"});
+    }
+    user.generateToken();
+    await user.save();
+    res.send(user);
+});
+
+router.delete("/sessions", async (req, res) => {
+    const token = req.get("Authorization");
+    const success = {message: "Success"};
+
+    if (!token) return res.send(success);
+    const user = await User.findOne({token});
+
+    if (!user) return res.send(success);
+
+    user.generateToken();
+    user.save();
+
+    return res.send(success);
+});
+
+module.exports = router;
