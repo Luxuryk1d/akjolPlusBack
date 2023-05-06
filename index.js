@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const {app, port} = require("./app");
 const config = require("./config");
 const users = require("./app/users");
-const review = require("./app/review")
+const review = require("./app/review");
+const rating = require("./app/rating");
 const cors = require("cors");
 const express = require("express")
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -25,6 +26,7 @@ const run = async () => {
 
     app.use("/users", users);
     app.use("/review", review);
+    app.use("/rating", rating)
 
     console.log("Connected to mongo DB");
 
